@@ -34,3 +34,6 @@ def onServerInfo(server, info):
     result = PlayerInfoAPI.getPlayerInfo(server,info.player)
     server.say("Dim:"+result["Dim"]+"Pos:"+result["Pos"][0]+","+result["Pos"][1]+","+result["Pos"][2])
 ```
+you can also refer to the demo of Here plugin with this API(in newapi branch)
+
+[Here(Demo)](https://github.com/TISUnion/Here/tree/newapi)
