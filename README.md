@@ -1,9 +1,11 @@
 # PlayerInfoAPI
 a MCDaemon plugin to provide API for getting player information
 ## Usage
-Put this plugin in "plugins" folder and use
-``` import PlayerInfoAPI ```
-in your plugin
+
+**Not Usable For Now**
+
+~~Put this plugin in "plugins" folder and use` import PlayerInfoAPI `in your plugin~~
+
 
 
 ### PlayerInfoAPI.getPlayerInfo(Server server,String name)
