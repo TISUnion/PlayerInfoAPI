@@ -16,9 +16,11 @@ def onServerInfo(server, info):
       position_str = re.search("(?<=Pos: )\[.*?\]",info.content).group()
       position = re.findall("\[(-?\d*).*?, (-?\d*).*?, (-?\d*).*?\]",position_str)[0]
       health = re.search("(?<=Health: )-?\d*",info.content).group()
+      foodlv = re.search("(?<=foodLevel: )-?\d*",info.content).group()
       player_info["Pos"] = position
       player_info["Dim"] = dimension
       player_info["Health"] = health
+      player_info["foodLevel"] = foodlv
       workQueue.put(player_info)
 
 def process_data(q):
