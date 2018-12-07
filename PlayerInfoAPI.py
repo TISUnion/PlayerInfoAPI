@@ -17,10 +17,12 @@ def onServerInfo(server, info):
       position = re.findall("\[(-?\d*).*?, (-?\d*).*?, (-?\d*).*?\]",position_str)[0]
       health = re.search("(?<=Health: )-?\d*",info.content).group()
       foodlv = re.search("(?<=foodLevel: )-?\d*",info.content).group()
+      XpLevel = re.search("(?<=XpLevel: )-?\d*",info.content).group()
       player_info["Pos"] = position
       player_info["Dim"] = dimension
       player_info["Health"] = health
       player_info["foodLevel"] = foodlv
+      player_info["XpLevel"] = XpLevel
       workQueue.put(player_info)
 
 def process_data(q):
@@ -49,4 +51,4 @@ class WorkingThread(threading.Thread):
   def join(self):
     threading.Thread.join(self)
     return self._return
-    
+  
