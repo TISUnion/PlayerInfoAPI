@@ -23,7 +23,8 @@ Return:
  ```
  {
    'Dim':'0',
-   'Pos':('-50','64','300')
+   'Pos':('-50','64','300'),
+   'Health':'15'
  }
  ```
 
@@ -31,6 +32,7 @@ Return:
 | ------ | ------ | ------ | ------ |
 | Dim | string | dimension the player stay (by code) | '0' (means main world) |
 | Pos | tuple of string | coordinate of the player (x,y,z) | ('-50','64','300') |
+| Health | string | health value of the palyer (in string) | '15' |
 
 ## Example
 
