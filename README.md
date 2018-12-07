@@ -25,7 +25,8 @@ Return:
    'Dim':'0',
    'Pos':('-50','64','300'),
    'Health':'15',
-   'foodLevel':'17'
+   'foodLevel':'17',
+   'XpLevel':'5'
  }
  ```
 
@@ -35,6 +36,7 @@ Return:
 | Pos | tuple of string | coordinate of the player (x,y,z) | ('-50','64','300') |
 | Health | string | health value of the palyer (in string) | '15' |
 | foodLevel | string | hungry value of the palyer (in string) | '17' |
+| XpLevel | string | level of the palyer (in string) | '5' |
 
 ## Example
 
