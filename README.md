@@ -20,23 +20,8 @@ Args:
 Return:
  - a Dictionary Object of result 
 
- ```
- {
-   'Dim':'0',
-   'Pos':('-50','64','300'),
-   'Health':'15',
-   'foodLevel':'17',
-   'XpLevel':'5'
- }
- ```
-
-| key | type | description | example value |
-| ------ | ------ | ------ | ------ |
-| Dim | string | dimension the player stay (by code) | '0' (means main world) |
-| Pos | tuple of string | coordinate of the player (x,y,z) | ('-50','64','300') |
-| Health | string | health value of the palyer (in string) | '15' |
-| foodLevel | string | hungry value of the palyer (in string) | '17' |
-| XpLevel | string | level of the palyer (in string) | '5' |
+please refer to the Player.dat page on minecraft wiki
+[Player.dat格式](https://minecraft-zh.gamepedia.com/Player.dat%E6%A0%BC%E5%BC%8F)
 
 ## Example
 
@@ -47,7 +32,7 @@ PlayerInfoAPI = load_source('PlayerInfoAPI','./plugins/PlayerInfoAPI.py')
 def onServerInfo(server, info):
   if info.content.startswith('!!test'):
     result = PlayerInfoAPI.getPlayerInfo(server,info.player)
-    server.say("Dim:"+result["Dim"]+"Pos:"+result["Pos"][0]+","+result["Pos"][1]+","+result["Pos"][2])
+    server.say("Dim:"+str(result["Dimension"])+"Pos:"+str(result["Pos"][0])+","+str(result["Pos"][1])+","+str(result["Pos"][2]))
 ```
 
 you can also refer to the demo of Here plugin with this API(in newapi branch)
