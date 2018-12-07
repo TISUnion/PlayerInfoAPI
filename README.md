@@ -1,6 +1,8 @@
 # PlayerInfoAPI
 a MCDaemon plugin to provide API for getting player information
 
+(Thank Pandaria for providing the regular expression)
+
 ## Usage
 
 Use imp.load_source() to load PlayerInfoAPI in your plugin first
@@ -9,7 +11,6 @@ Use imp.load_source() to load PlayerInfoAPI in your plugin first
 from imp import load_source
 PlayerInfoAPI = load_source('PlayerInfoAPI','./plugins/PlayerInfoAPI.py')
 ```
-
 
 ### PlayerInfoAPI.getPlayerInfo(Server server,String name)
 
