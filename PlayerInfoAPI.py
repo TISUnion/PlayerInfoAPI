@@ -12,7 +12,9 @@ def onServerInfo(server, info):
   if (info.isPlayer == 0):
     if("following entity data" in info.content):
       process_str = re.sub('.*?has the following entity data: ','',info.content)  #remove title
-      process_str = process_str.replace('minecraft:','')  #remove namespace
+      black_list = ['minecraft:', 'xekr:']
+      for str in black_list:
+        process_str = process_str.replace(str,'')  #remove namespace
       process_str = re.sub(r"(?<=\d)[a-zA-Z]", '', process_str)  #remove letter after number
       process_str = re.sub(r"([a-zA-Z]*)(?=:)", '"\g<1>"', process_str)  #add quotation marks
       player_info = json.loads(process_str)
