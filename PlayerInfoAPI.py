@@ -1,49 +1,64 @@
 # -*- coding: utf-8 -*-
-
+import copy
 import re
-import threading
-import Queue
 import json
+try:
+	import Queue
+except ImportError:
+	import queue as Queue
 
-workQueue = Queue.Queue(1)
+work_queue = Queue.Queue()
+query_count = 0
+
+
+def convertMinecraftJson(text):
+	text = re.sub(r'^.* has the following entity data: ', '', text)  # yeet prefix
+	text = re.sub(r'(?<=\d)[a-zA-Z](?=\D)', '', text)  # remove letter after number
+	text = re.sub(r'([a-zA-Z.]+)(?=:)', '"\g<1>"', text)  # add quotation marks to all
+	list_a = re.split(r'""[a-zA-Z.]+":', text)  # split good texts
+	list_b = re.findall(r'""[a-zA-Z.]+":', text)  # split bad texts
+	result = list_a[0]
+	for i in range(len(list_b)):
+		result += list_b[i].replace('""', '"').replace('":', ':') + list_a[i + 1]
+	return json.loads(result)
+
+
+def getPlayerInfo(server, name, path=''):
+	if len(path) >= 1 and not path.startswith(' '):
+		path = ' ' + path
+	command = 'data get entity {}{}'.format(name, path)
+	if hasattr(server, 'MCDR') and server.is_rcon_running():
+		result = server.rcon_query(command)
+	else:
+		global query_count
+		query_count += 1
+		try:
+			server.execute(command)
+			global work_queue
+			while work_queue.empty():
+				pass
+			result = work_queue.get()
+		finally:
+			query_count -= 1
+	return convertMinecraftJson(result)
+
+
+def cleanQueue():
+	while not work_queue.empty():
+		work_queue.get()
+
 
 def onServerInfo(server, info):
-  global workQueue
-  if (info.isPlayer == 0):
-    if("following entity data" in info.content):
-      process_str = re.sub('.*?has the following entity data: ','',info.content)  #remove title
-      black_list = ['minecraft:', 'xekr:']
-      for str in black_list:
-        process_str = process_str.replace(str,'')  #remove namespace
-      process_str = re.sub(r"(?<=\d)[a-zA-Z]", '', process_str)  #remove letter after number
-      process_str = re.sub(r"([a-zA-Z]*)(?=:)", '"\g<1>"', process_str)  #add quotation marks
-      player_info = json.loads(process_str)
-      workQueue.put(player_info)
+	global work_queue
+	if info.isPlayer == 0:
+		if ' has the following entity data: ' in info.content:
+			if query_count > 0:
+				work_queue.put(info.content)
+			else:
+				cleanQueue()
 
-def process_data(q):
-  while(q.empty()):
-    pass
-  return q.get()
 
-def getPlayerInfo(server,name):
-  global workQueue
-  server.execute("data get entity "+name)
-  thread = WorkingThread(1, name,server,workQueue)
-  thread.start()
-  result = thread.join()
-  return result
-
-class WorkingThread(threading.Thread):
-  def __init__(self, threadID, name, server,q):
-    threading.Thread.__init__(self)
-    self.threadID = threadID
-    self.name = name
-    self.server = server
-    self._return = None
-    self.q = q
-  def run(self):
-    self._return = process_data(self.q)
-  def join(self):
-    threading.Thread.join(self)
-    return self._return
-    
+def on_info(server, info):
+	info2 = copy.deepcopy(info)
+	info2.isPlayer = info2.is_player
+	onServerInfo(server, info2)
