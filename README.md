@@ -50,6 +50,8 @@ Samples:
 
 Call `data get entity <name> [<path>]` and parse the result
 
+If it's in MCDReforged and rcon is enabled it will use rcon to query
+
 Args:
 - server: the Server Object
 - name: name of the player who you want to get his/her info
