@@ -1,9 +1,13 @@
 # PlayerInfoAPI
 -------------
 
+[中文](https://github.com/TISUnion/PlayerInfoAPI/blob/master/README_cn.md)
+
 a MCDaemon plugin to provide API for getting player information
 
 Compatible with MCDaemon and MCDReforged
+
+Now support 1.14+ new JSON string format
 
 (Thank Pandaria for providing the regular expression)
 
@@ -35,7 +39,7 @@ Minecraft style json format is something like these:
 It will automatically detect if there is a `<name> has the following entity data: `. If there is, it will erase it before converting
 
 Args:
-- text: A data get entity ot other command result that use Minecraft style json format
+- text: A data get entity or other command result that use Minecraft style json format
 
 Return:
 - a parsed json result

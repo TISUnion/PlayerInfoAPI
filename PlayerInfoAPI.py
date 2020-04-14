@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import copy
 import re
+import ast
 import json
+import json.decoder
 try:
 	import Queue
 except ImportError:
@@ -20,7 +22,66 @@ def convertMinecraftJson(text):
 	result = list_a[0]
 	for i in range(len(list_b)):
 		result += list_b[i].replace('""', '"').replace('":', ':') + list_a[i + 1]
-	return json.loads(result)
+	x = [i for i in mcSingleQuotationJsonReader(result)]
+	return json.loads("".join(x))
+
+
+def mcSingleQuotationJsonReader(data):
+	part = data
+	count = 1
+	while True:
+		spliter = part.split(r"'{", maxsplit=1)  # Match first opening braces
+		yield spliter[0]
+		if len(spliter) == 1:
+			return  # No more
+		else:
+			part_2 = spliter[1].split(r"}'")  # Match all closing braces
+			index = 0
+			res = jsonCheck("".join(part_2[:index + 1]))
+			while not res:
+				index += 1
+				if index == len(part_2):
+					raise RuntimeError("Out of index")  # Looks like illegal json string
+				res = jsonCheck("".join(part_2[:index + 1]))
+			j_dict = ""
+			while res:
+				# Is real need?
+				j_dict = res
+				index += 1
+				if index == len(part_2):
+					break  # Yep, is real
+				res = jsonCheck("".join(part_2[:index + 1]))
+
+			yield j_dict  # Match a json string
+
+		# Restore split string
+		part_2 = part_2[index:]
+		part = part_2[0]
+		if len(part_2) > 1:
+			for i in part_2[1:]:
+				part += "}'"
+				part += i
+		count += 1
+
+
+def jsonCheck(j):
+	checking = "".join(["{", j, "}"])
+	try:
+		# Plan A
+		# checking = checking.replace("\"", "\\\"")
+		# checking = checking.replace("\'","\\\'")
+		# checking = checking.replace("\\n", "\\\\n")
+		checking = checking.replace(r'\\', "\\")
+		res = json.loads(checking)
+	except json.decoder.JSONDecodeError:
+		try:
+			# Plan B
+			res = ast.literal_eval(checking)
+		except Exception:
+			return False
+
+	data = json.dumps({"data": json.dumps(res)})
+	return data[9:-1]
 
 
 def getPlayerInfo(server, name, path=''):
