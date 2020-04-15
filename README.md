@@ -1,7 +1,7 @@
 # PlayerInfoAPI
 -------------
 
-[中文](#https://github.com/TISUnion/PlayerInfoAPI/blob/master/README_cn.md)
+[中文](https://github.com/TISUnion/PlayerInfoAPI/blob/master/README_cn.md)
 
 a MCDaemon plugin to provide API for getting player information
 
