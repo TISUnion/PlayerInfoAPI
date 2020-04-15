@@ -111,12 +111,16 @@ def cleanQueue():
 
 def onServerInfo(server, info):
 	global work_queue
-	if info.isPlayer == 0:
-		if ' has the following entity data: ' in info.content:
-			if query_count > 0:
-				work_queue.put(info.content)
-			else:
-				cleanQueue()
+	if info.isPlayer == 0 and ' has the following entity data: ' in info.content:
+		if query_count > 0:
+			work_queue.put(info.content)
+		else:
+			cleanQueue()
+	if info.isPlayer == 0 and 'Found no elements matching' in info.content:
+		if query_count > 0:
+			work_queue.put("null")
+		else:
+			cleanQueue()
 
 
 def on_info(server, info):
