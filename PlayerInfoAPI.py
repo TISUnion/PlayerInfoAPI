@@ -4,6 +4,8 @@ import re
 import ast
 import json
 import json.decoder
+import time
+
 try:
 	import Queue
 except ImportError:
@@ -14,16 +16,33 @@ query_count = 0
 
 
 def convertMinecraftJson(text):
+	# Alex has the following entity data: {a: 0b, big: 2.99E7, c: "minecraft:white_wool", d: '{"text":"rua"}'}
+	# yeet the prefix
 	text = re.sub(r'^.* has the following entity data: ', '', text)  # yeet prefix
-	text = re.sub(r'(?<=\d)[a-zA-Z](?=\D)', '', text)  # remove letter after number
-	text = re.sub(r'([a-zA-Z.]+)(?=:)', '"\g<1>"', text)  # add quotation marks to all
+
+	# {a: 0b, big: 2.99E7, c: "minecraft:white_wool", d: '{"text":"rua"}'}
+	# remove letter after number
+	text = re.sub(r'(?<=\d)[a-zA-Z](?=\D)', '', text)
+
+	# {a: 0, big: 2.99E7, c: "minecraft:white_wool", d: '{"text":"rua"}'}
+	# add quotation marks to all
+	text = re.sub(r'([a-zA-Z.]+)(?=:)', '"\g<1>"', text)
+
+	# remove unnecessary quotation created by namespaces
+	# {"a": 0, "big": 2.99E7, "c": ""minecraft":white_wool", "d": '{"text":"rua"}'}
 	list_a = re.split(r'""[a-zA-Z.]+":', text)  # split good texts
 	list_b = re.findall(r'""[a-zA-Z.]+":', text)  # split bad texts
 	result = list_a[0]
 	for i in range(len(list_b)):
 		result += list_b[i].replace('""', '"').replace('":', ':') + list_a[i + 1]
-	x = [i for i in mcSingleQuotationJsonReader(result)]
-	return json.loads("".join(x))
+
+	# {"a": 0, "big": 2.99E7, "c": "minecraft.white_wool", "d": '{"text":"rua"}'}
+	# process apostrophe string
+	text = ''.join([i for i in mcSingleQuotationJsonReader(result)])
+
+	# {"a": 0, "big": 2.99E7, "c": "minecraft.white_wool", "d": "{\"text\": \"rua\"}"}
+	# finish
+	return json.loads(text)
 
 
 def mcSingleQuotationJsonReader(data):
@@ -84,7 +103,7 @@ def jsonCheck(j):
 	return data[9:-1]
 
 
-def getPlayerInfo(server, name, path=''):
+def getPlayerInfo(server, name, path='', timeout=5):
 	if len(path) >= 1 and not path.startswith(' '):
 		path = ' ' + path
 	command = 'data get entity {}{}'.format(name, path)
@@ -96,31 +115,21 @@ def getPlayerInfo(server, name, path=''):
 		try:
 			server.execute(command)
 			global work_queue
-			while work_queue.empty():
-				pass
-			result = work_queue.get()
+			result = work_queue.get(timeout=timeout)
+		except Queue.Empty:
+			result = 'null'
 		finally:
 			query_count -= 1
 	return convertMinecraftJson(result)
 
 
-def cleanQueue():
-	while not work_queue.empty():
-		work_queue.get()
-
-
 def onServerInfo(server, info):
 	global work_queue
-	if info.isPlayer == 0 and ' has the following entity data: ' in info.content:
+	if info.isPlayer == 0 and re.fullmatch(r'.* has the following entity data: .*', info.content):
 		if query_count > 0:
 			work_queue.put(info.content)
 		else:
-			cleanQueue()
-	if info.isPlayer == 0 and 'Found no elements matching' in info.content:
-		if query_count > 0:
-			work_queue.put("null")
-		else:
-			cleanQueue()
+			work_queue.queue.clear()
 
 
 def on_info(server, info):

@@ -42,7 +42,7 @@ Args:
 - text: A data get entity or other command result that use Minecraft style json format
 
 Return:
-- a parsed json result
+- A parsed json result. It can be a `dict`, a `list`, a `int` or a `None`
 
 Samples:
 
@@ -50,22 +50,23 @@ Samples:
 
 - Input `{HurtByTimestamp: 0, SleepTimer: 0s, Inventory: [], foodTickTimer: 0}`, output `{'HurtByTimestamp': 0, 'SleepTimer': 0, 'Inventory': [], 'foodTickTimer': 0}`
 
-### PlayerInfoAPI.getPlayerInfo(server, name, path='')
+### PlayerInfoAPI.getPlayerInfo(server, name, path='', timeout=5)
 
 Call `data get entity <name> [<path>]` and parse the result
 
 If it's in MCDReforged and rcon is enabled it will use rcon to query
 
 Args:
-- server: the Server Object
-- name: name of the player who you want to get his/her info
-- path: an optional `path` parameter in `data get entity` command
+- server: The Server Object
+- name: Name of the player who you want to get his/her info
+- path: An optional `path` parameter in `data get entity` command
+- timeout: The maximum time to wait the data result if rcon is off. Return `None` if time out
 
 Return:
- - a parsed json result
+- A parsed json result. It can be a `dict`, a `list`, a `int` or a `None`
 
 Please refer to the Player.dat page on minecraft wiki
-[Player.dat格式](https://minecraft-zh.gamepedia.com/Player.dat%E6%A0%BC%E5%BC%8F)
+[player.dat format](https://minecraft.gamepedia.com/Player.dat_format)
 
 ## Example
 

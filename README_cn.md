@@ -18,7 +18,7 @@ from imp import load_source
 PlayerInfoAPI = load_source('PlayerInfoAPI','./plugins/PlayerInfoAPI.py')
 ```
 
-如果使用 MCDReforged 只需使用 `server.get_plugin_instance()` 来获得 PlayerInfoAPI 插件实例
+如果使用 MCDReforged 必须使用 `server.get_plugin_instance()` 来获得 PlayerInfoAPI 插件实例
 
 ```
 PlayerInfoAPI = server.get_plugin_instance('PlayerInfoAPI')
@@ -40,13 +40,13 @@ PlayerInfoAPI = server.get_plugin_instance('PlayerInfoAPI')
 - text: 从`/data get entity`指令或者其他命令获得的麻将牌JSON数据
 
 返回：
-- 解析后的结果
+- json 解析后的结果。它可以是一个 `dict`, 一个 `list`, 一个 `int` 或者一个 `None`
 
 示例：
 
-- 输入： `Steve has the following entity data: [-227.5d, 64.0d, 231.5d]`, output `[-227.5, 64.0, 123000.0]`
+- 输入： `Steve has the following entity data: [-227.5d, 64.0d, 231.5d]`, 输出： `[-227.5, 64.0, 123000.0]`
 
-- 输出： `{HurtByTimestamp: 0, SleepTimer: 0s, Inventory: [], foodTickTimer: 0}`, output `{'HurtByTimestamp': 0, 'SleepTimer': 0, 'Inventory': [], 'foodTickTimer': 0}`
+- 输入： `{HurtByTimestamp: 0, SleepTimer: 0s, Inventory: [], foodTickTimer: 0}`, 输出： `{'HurtByTimestamp': 0, 'SleepTimer': 0, 'Inventory': [], 'foodTickTimer': 0}`
 
 ### 方法：PlayerInfoAPI.getPlayerInfo(server, name, path='')
 
@@ -58,6 +58,8 @@ PlayerInfoAPI = server.get_plugin_instance('PlayerInfoAPI')
 - server: Server对象
 - name: 要获得TA数据的目标玩家
 - path: 在`/data get entity` 指令中的可选参数`path`
+- timeout: 当 rcon 关闭时等待结果的最长时间。如果超时了则返回 `None`
+
 
 返回：
  - 解析后的结果
