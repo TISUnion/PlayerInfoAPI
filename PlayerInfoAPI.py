@@ -5,13 +5,15 @@ import ast
 import json
 import json.decoder
 import time
+from threading import Lock
 
 try:
 	import Queue
 except ImportError:
 	import queue as Queue
 
-work_queue = Queue.Queue()
+work_queue = {}
+queue_lock = Lock()
 query_count = 0
 
 
@@ -103,10 +105,24 @@ def jsonCheck(j):
 	return data[9:-1]
 
 
-def getPlayerInfo(server, name, path='', timeout=5):
+def get_queue(player):
+	with queue_lock:
+		if player not in work_queue:
+			work_queue[player] = Queue.Queue()
+	return work_queue[player]
+
+
+def clean_queue():
+	global work_queue, queue_lock
+	with queue_lock:
+		for q in work_queue.values():
+			q.queue.clear()
+
+
+def getPlayerInfo(server, player, path='', timeout=5):
 	if len(path) >= 1 and not path.startswith(' '):
 		path = ' ' + path
-	command = 'data get entity {}{}'.format(name, path)
+	command = 'data get entity {}{}'.format(player, path)
 	if hasattr(server, 'MCDR') and server.is_rcon_running():
 		result = server.rcon_query(command)
 	else:
@@ -115,7 +131,7 @@ def getPlayerInfo(server, name, path='', timeout=5):
 		try:
 			server.execute(command)
 			global work_queue
-			result = work_queue.get(timeout=timeout)
+			result = get_queue(player).get(timeout=timeout)
 		except Queue.Empty:
 			result = 'null'
 		finally:
@@ -125,11 +141,12 @@ def getPlayerInfo(server, name, path='', timeout=5):
 
 def onServerInfo(server, info):
 	global work_queue
-	if info.isPlayer == 0 and re.fullmatch(r'.* has the following entity data: .*', info.content):
+	if info.isPlayer == 0 and re.fullmatch(r'\w+ has the following entity data: .*', info.content):
+		player = info.content.split(' ')[0]
 		if query_count > 0:
-			work_queue.put(info.content)
+			get_queue(player).put(info.content)
 		else:
-			work_queue.queue.clear()
+			clean_queue()
 
 
 def on_info(server, info):

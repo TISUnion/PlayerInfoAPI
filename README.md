@@ -3,9 +3,7 @@
 
 [中文](https://github.com/TISUnion/PlayerInfoAPI/blob/master/README_cn.md)
 
-a MCDaemon plugin to provide API for getting player information
-
-Compatible with MCDaemon and MCDReforged
+a MCDReforged plugin to provide API for getting player information
 
 Now support 1.14+ new JSON string format
 

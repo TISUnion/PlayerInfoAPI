@@ -1,11 +1,9 @@
 # PlayerInfoAPI
 -------------
 
-一个提供获取玩家信息API的MCD插件
+一个提供获取玩家信息的 MCDReforged 插件 API
 
-兼容 MCDaemon 和 MCDReforged
-
-现在支持14.4以上的新JSON字符串格式
+现在支持 1.14.4 以上的新 JSON 字符串格式
 
 (感谢 Pandaria 提供的有关正则表达式的支持)
 
