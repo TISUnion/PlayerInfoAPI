@@ -1,6 +1,8 @@
 # PlayerInfoAPI
 -------------
 
+**正在使用 MCDR 1.0+？去看看 [MinecraftDataAPI](https://github.com/MCDReforged/MinecraftDataAPI) 吧**
+
 一个提供获取玩家信息的 MCDReforged 插件 API
 
 现在支持 1.14.4 以上的新 JSON 字符串格式

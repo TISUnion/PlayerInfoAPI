@@ -3,6 +3,8 @@
 
 [中文](https://github.com/TISUnion/PlayerInfoAPI/blob/master/README_cn.md)
 
+**Check [MinecraftDataAPI](https://github.com/MCDReforged/MinecraftDataAPI) for MCDR 1.0+**
+
 a MCDReforged plugin to provide API for getting player information
 
 Now support 1.14+ new JSON string format
